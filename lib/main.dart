@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:new_database/screens/account_screen.dart';
-import 'package:new_database/screens/home_screen.dart';
 import 'package:new_database/screens/login_screen.dart';
 import 'package:new_database/screens/reset_password_screen.dart';
 import 'package:new_database/screens/signup_screen.dart';
