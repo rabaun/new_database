@@ -1,15 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:flutter/material.dart';
 import 'package:new_database/screens/account_screen.dart';
 import 'package:new_database/screens/login_screen.dart';
 import 'package:new_database/screens/reset_password_screen.dart';
 import 'package:new_database/screens/signup_screen.dart';
 import 'package:new_database/screens/verify_email_screen.dart';
 import 'package:new_database/services/firebase_streem.dart';
+
 import 'firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -92,7 +94,6 @@ class HomeScreen extends StatelessWidget {
 
 class UserPage extends StatefulWidget {
   const UserPage({Key? key}) : super(key: key);
-
 
   @override
   State<UserPage> createState() => _UserPageState();
@@ -172,13 +173,14 @@ class _InsertDataState extends State<InsertData> {
   final userNameController = TextEditingController();
   final userAgeController = TextEditingController();
   final userSalaryController = TextEditingController();
+  final myUserId = FirebaseAuth.instance.currentUser!.uid;
 
   late DatabaseReference dbRef;
 
   @override
   void initState() {
     super.initState();
-    dbRef = FirebaseDatabase.instance.ref().child('Students');
+    dbRef = FirebaseDatabase.instance.ref().child('Students').child(myUserId);
   }
 
   @override
@@ -247,7 +249,7 @@ class _InsertDataState extends State<InsertData> {
                   Map<String, String> students = {
                     'name': userNameController.text,
                     'age': userAgeController.text,
-                    'salary': userSalaryController.text
+                    'salary': userSalaryController.text,
                   };
 
                   dbRef.push().set(students);
@@ -274,9 +276,18 @@ class FetchData extends StatefulWidget {
 }
 
 class _FetchDataState extends State<FetchData> {
-  Query dbRef = FirebaseDatabase.instance.ref().child('Students');
-  DatabaseReference reference =
-      FirebaseDatabase.instance.ref().child('Students');
+  final myUserId = FirebaseAuth.instance.currentUser!.uid;
+
+  late DatabaseReference dbRef;
+  late DatabaseReference reference;
+
+  @override
+  void initState() {
+    super.initState();
+    dbRef = FirebaseDatabase.instance.ref().child('Students').child(myUserId);
+    reference =
+        FirebaseDatabase.instance.ref().child('Students').child(myUserId);
+  }
 
   Widget listItem({required Map student}) {
     return Container(
