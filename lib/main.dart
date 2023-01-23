@@ -396,13 +396,14 @@ class _UpdateRecordState extends State<UpdateRecord> {
   final userNameController = TextEditingController();
   final userAgeController = TextEditingController();
   final userSalaryController = TextEditingController();
+  final myUserId = FirebaseAuth.instance.currentUser!.uid;
 
   late DatabaseReference dbRef;
 
   @override
   void initState() {
     super.initState();
-    dbRef = FirebaseDatabase.instance.ref().child('Students');
+    dbRef = FirebaseDatabase.instance.ref().child('Students').child(myUserId);
     getStudentData();
   }
 
