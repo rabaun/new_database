@@ -2,14 +2,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:new_database/screens/account_screen.dart';
+import 'package:new_database/screens/fetch_data_screen.dart';
+import 'package:new_database/screens/insert_data_screen.dart';
 import 'package:new_database/screens/login_screen.dart';
 import 'package:new_database/screens/reset_password_screen.dart';
 import 'package:new_database/screens/signup_screen.dart';
+import 'package:new_database/screens/update_record_screen.dart';
 import 'package:new_database/screens/verify_email_screen.dart';
 import 'package:new_database/services/firebase_streem.dart';
 
+import 'dialogs.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -84,7 +89,7 @@ class HomeScreen extends StatelessWidget {
         child: Center(
           child: (user == null)
               ? const Text("Контент для НЕ зарегистрированных в системе")
-              : const UserPage(),
+              : const ProfilesList(),
           //child: Text('Контент для НЕ зарегистрированных в системе'),
         ),
       ),
@@ -162,120 +167,17 @@ class _UserPageState extends State<UserPage> {
   }
 }
 
-class InsertData extends StatefulWidget {
-  const InsertData({Key? key}) : super(key: key);
+class ProfilesList extends StatefulWidget {
+  const ProfilesList({Key? key}) : super(key: key);
 
   @override
-  State<InsertData> createState() => _InsertDataState();
+  ProfilesListState createState() => ProfilesListState();
 }
 
-class _InsertDataState extends State<InsertData> {
+class ProfilesListState extends State<ProfilesList> {
   final userNameController = TextEditingController();
   final userAgeController = TextEditingController();
   final userSalaryController = TextEditingController();
-  final myUserId = FirebaseAuth.instance.currentUser!.uid;
-
-  late DatabaseReference dbRef;
-
-  @override
-  void initState() {
-    super.initState();
-    dbRef = FirebaseDatabase.instance.ref().child('Students').child(myUserId);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Inserting data'),
-      ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 50,
-              ),
-              const Text(
-                'Inserting data in Firebase Realtime Database',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              TextField(
-                controller: userNameController,
-                keyboardType: TextInputType.text,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Name',
-                  hintText: 'Enter Your Name',
-                ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              TextField(
-                controller: userAgeController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Age',
-                  hintText: 'Enter Your Age',
-                ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              TextField(
-                controller: userSalaryController,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Salary',
-                  hintText: 'Enter Your Salary',
-                ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              MaterialButton(
-                onPressed: () {
-                  Map<String, String> students = {
-                    'name': userNameController.text,
-                    'age': userAgeController.text,
-                    'salary': userSalaryController.text,
-                  };
-
-                  dbRef.push().set(students);
-                },
-                child: const Text('Insert Data'),
-                color: Colors.blue,
-                textColor: Colors.white,
-                minWidth: 300,
-                height: 40,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class FetchData extends StatefulWidget {
-  const FetchData({Key? key}) : super(key: key);
-
-  @override
-  State<FetchData> createState() => _FetchDataState();
-}
-
-class _FetchDataState extends State<FetchData> {
   final myUserId = FirebaseAuth.instance.currentUser!.uid;
 
   late DatabaseReference dbRef;
@@ -289,116 +191,184 @@ class _FetchDataState extends State<FetchData> {
         FirebaseDatabase.instance.ref().child('Students').child(myUserId);
   }
 
-  Widget listItem({required Map student}) {
-    return Container(
-      margin: const EdgeInsets.all(10),
-      padding: const EdgeInsets.all(10),
-      height: 110,
-      color: Colors.amberAccent,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            student['name'],
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            student['age'],
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            student['salary'],
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) =>
-                              UpdateRecord(studentKey: student['key'])));
-                },
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.edit,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                width: 6,
-              ),
-              GestureDetector(
-                onTap: () {
-                  reference.child(student['key']).remove();
-                },
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.delete,
-                      color: Colors.red[700],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          )
-        ],
+  Widget _buildCard({required Map student}) {
+    return SizedBox(
+      child: Card(
+        child: Column(
+          children: [
+            ListTileTheme(
+                contentPadding: const EdgeInsets.all(15),
+                iconColor: Colors.red,
+                textColor: Colors.black54,
+                tileColor: Colors.yellow[100],
+                style: ListTileStyle.list,
+                dense: true,
+                child: ListTile(
+                  title: Text(student['name']),
+                  subtitle: Text(student['age']),
+                  leading: Icon(Icons.account_circle,
+                      color: Colors.blue[500], size: 30),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 8.0, 0),
+                        child: Text(
+                          student['salary'],
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => UpdateRecord(
+                                      studentKey: student['key'])));
+                        },
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.edit,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 6,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          reference.child(student['key']).remove();
+                        },
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.delete,
+                              color: Colors.red[700],
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                )),
+          ],
+        ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    Map? student;
+    reference =
+        FirebaseDatabase.instance.ref().child('Students').child(myUserId);
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Fetching data'),
-        ),
-        body: Container(
-          height: double.infinity,
-          child: FirebaseAnimatedList(
-            query: dbRef,
-            itemBuilder: (BuildContext context, DataSnapshot snapshot,
-                Animation<double> animation, int index) {
-              Map student = snapshot.value as Map;
-              student['key'] = snapshot.key;
+      appBar: AppBar(
+        title: Text('Долговая книжка'),
+        centerTitle: true,
+        actions: [
+          PopupMenuButton(
+            onSelected: (value) {
+              switch (value) {
+                case MenuItem.removeAllProfiles:
+                  setState(() {
+                    reference.child(student?['key']).remove();
+                  });
+                  MaterialButton(
+                    onPressed: () {
+                      Map<String, String> students = {
+                        'name': userNameController.text,
+                        'age': userAgeController.text,
+                        'salary': userSalaryController.text,
+                      };
 
-              return listItem(student: student);
+                      dbRef.push().set(students);
+                    },
+                  );
+                  break;
+                case MenuItem.onboarding:
+                  Navigator.of(context).pushReplacementNamed('/onboarding');
+                  break;
+              }
             },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: MenuItem.removeAllProfiles,
+                child: Text('Удалить все профили'),
+              ),
+              PopupMenuItem(
+                value: MenuItem.onboarding,
+                child: Text('Показать гид'),
+              ),
+            ],
           ),
-        ));
+        ],
+      ),
+      body: Container(
+        height: double.infinity,
+        child: FirebaseAnimatedList(
+          query: dbRef,
+          itemBuilder: (BuildContext context, DataSnapshot snapshot,
+              Animation<double> animation, int index) {
+            Map student = snapshot.value as Map;
+            student['key'] = snapshot.key;
+
+            return (student['key'] != null)
+                ? Column(
+                    children: [
+                      _buildCard(student: student),
+                    ],
+                  )
+                : const Center(child: CircularProgressIndicator());
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AddProfileDialog();
+            },
+          );
+        },
+      ),
+    );
   }
 }
 
-class UpdateRecord extends StatefulWidget {
-  const UpdateRecord({Key? key, required this.studentKey}) : super(key: key);
-
+class _ProfileCard extends StatefulWidget {
+  final void Function() removeProfile;
+  final void Function() saveProfiles;
   final String studentKey;
 
+  const _ProfileCard(this.removeProfile, this.saveProfiles,
+      {Key? key, required this.studentKey})
+      : super(key: key);
+
   @override
-  State<UpdateRecord> createState() => _UpdateRecordState();
+  _ProfileCardState createState() => _ProfileCardState();
 }
 
-class _UpdateRecordState extends State<UpdateRecord> {
+class _ProfileCardState extends State<_ProfileCard>
+    with TickerProviderStateMixin {
+  bool _expanded = false;
+  bool _showAreYouSureButton = false;
+
   final userNameController = TextEditingController();
   final userAgeController = TextEditingController();
   final userSalaryController = TextEditingController();
   final myUserId = FirebaseAuth.instance.currentUser!.uid;
 
   late DatabaseReference dbRef;
+  late DatabaseReference reference;
+
+  get student => dbRef.child(widget.studentKey).get();
 
   @override
   void initState() {
@@ -419,88 +389,177 @@ class _UpdateRecordState extends State<UpdateRecord> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Updating record'),
-      ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 50,
+    return Card(
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _expanded = !_expanded;
+            if (_expanded) _showAreYouSureButton = false;
+          });
+        },
+        onLongPress: () {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return EditProfileDialog(userNameController.text);
+              });
+        },
+        child: Column(
+          children: [
+            ListTile(
+              title: Text(
+                userNameController.text,
+                style: TextStyle(
+                  fontSize: 20,
+                ),
               ),
-              const Text(
-                'Updating data in Firebase Realtime Database',
+              trailing: Text(
+                userAgeController.text,
                 style: TextStyle(
                   fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              TextField(
-                controller: userNameController,
-                keyboardType: TextInputType.text,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Name',
-                  hintText: 'Enter Your Name',
                 ),
               ),
-              const SizedBox(
-                height: 30,
-              ),
-              TextField(
-                controller: userAgeController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Age',
-                  hintText: 'Enter Your Age',
-                ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              TextField(
-                controller: userSalaryController,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Salary',
-                  hintText: 'Enter Your Salary',
-                ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              MaterialButton(
-                onPressed: () {
-                  Map<String, String> students = {
-                    'name': userNameController.text,
-                    'age': userAgeController.text,
-                    'salary': userSalaryController.text
-                  };
-
-                  dbRef
-                      .child(widget.studentKey)
-                      .update(students)
-                      .then((value) => {Navigator.pop(context)});
-                },
-                child: const Text('Update Data'),
-                color: Colors.blue,
-                textColor: Colors.white,
-                minWidth: 300,
-                height: 40,
-              ),
-            ],
-          ),
+            ),
+            AnimatedCrossFade(
+              duration: Duration(milliseconds: 300),
+              sizeCurve: Curves.decelerate,
+              firstChild: Container(),
+              secondChild: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Divider(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Center(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ActionButton(
+                                context,
+                                icon: Icons.delete,
+                                label: _showAreYouSureButton
+                                    ? 'Вы уверены?'
+                                    : 'Удалить',
+                                onPressed: () {
+                                  if (!_showAreYouSureButton) {
+                                    setState(() {
+                                      _showAreYouSureButton = true;
+                                    });
+                                  } else {
+                                    widget.removeProfile.call();
+                                  }
+                                },
+                              ),
+                              ActionButton(
+                                context,
+                                icon: Icons.done_all,
+                                label: 'Очистить',
+                                onPressed: () {
+                                  setState(() {
+                                    reference.child(student['key']).remove();
+                                  });
+                                  reference.child(student['key']).remove();
+                                },
+                                disabled: true,
+                              ),
+                              ActionButton(
+                                context,
+                                icon: Icons.merge_type,
+                                label: 'Объединить',
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return MergeDebtsDialog();
+                                    },
+                                  );
+                                },
+                              ),
+                              ActionButton(
+                                context,
+                                icon: Icons.add,
+                                label: 'Добавить',
+                                onPressed: () async {
+                                  await showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AddDebtDialog();
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ]),
+              crossFadeState: _expanded
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
+            ),
+          ],
         ),
       ),
     );
   }
+}
+
+class ActionButton extends StatelessWidget {
+  final BuildContext context;
+  final IconData icon;
+  final String label;
+  final void Function() onPressed;
+  final bool? disabled;
+
+  const ActionButton(
+    this.context, {
+    Key? key,
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+    this.disabled,
+  }) : super(key: key);
+
+  Color getColor() {
+    if (disabled == null || !disabled!)
+      return Theme.of(context).buttonColor;
+    else
+      return Theme.of(context).disabledColor;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(4),
+      onTap: (disabled == null || !disabled!) ? onPressed : null,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Icon(
+                icon,
+                color: getColor(),
+              ),
+            ),
+            Text(
+              label.toUpperCase(),
+              style: TextStyle(
+                color: getColor(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+enum MenuItem {
+  removeAllProfiles,
+  onboarding,
 }
