@@ -41,6 +41,7 @@ dependencies:
   firebase_auth: ^4.0.2
   email_validator: ^2.1.17
   grouped_list: ^5.1.2
+  settings_ui: ^2.0.2
 
 dev_dependencies:
   flutter_test:
