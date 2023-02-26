@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:new_database/screens/credits_list_screen.dart';
+import 'package:new_database/screens/debts_list_screen.dart';
 import 'package:new_database/screens/settings_screen.dart';
 
 import 'account_screen.dart';
+import 'home_screen.dart';
 import 'login_screen.dart';
 
 class NavDrawer extends StatelessWidget {
@@ -14,26 +17,71 @@ class NavDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          const DrawerHeader(
-            decoration: BoxDecoration(
-                color: Colors.blue,
-                image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: AssetImage('assets/images/cover.jpg'))),
-            child: Text(
-              'Side menu',
-              style: TextStyle(color: Colors.white, fontSize: 25),
+          UserAccountsDrawerHeader(
+            accountName: const Text('ООО "Центр Безопасности Труда"',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: 'PlayfairDisplay',
+                )),
+            accountEmail: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+              child: Column(children: const [
+                Text('email: cbt-tambov@yandex.ru',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'PlayfairDisplay',
+                    )),
+                Text('тел.: +7 (4752) 73-44-06',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'PlayfairDisplay',
+                    )),
+              ]),
             ),
+            currentAccountPicture: const CircleAvatar(
+              backgroundColor: Colors.blue,
+              child: Image(
+                image: AssetImage('assets/oldman.jpg'),
+                // width: MediaQuery.of(context).size.width,
+              ),
+            ),
+            otherAccountsPictures: const <Widget>[
+              CircleAvatar(
+                backgroundColor: Colors.white,
+                child:  Image(
+                    image: AssetImage('assets/logo.png'),
+              ))
+            ],
           ),
           ListTile(
-            leading: Icon(Icons.input),
-            title: Text('Welcome'),
-            onTap: () => {},
+            leading: const Icon(Icons.input),
+            title: const Text('Я должен'),
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const DebtsList()),
+              )
+            },
           ),
           ListTile(
-            leading: Icon(Icons.verified_user),
-            title: Text('Profile'),
-            onTap: () => {Navigator.of(context).pop()},
+            leading: const Icon(Icons.input),
+            title: const Text('Мне должны'),
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CreditsList()),
+              )
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.verified_user),
+            title: const Text('Profile'),
+            onTap: () => {  Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreem()),
+            )},
           ),
           ListTile(
             leading: const Icon(Icons.settings),

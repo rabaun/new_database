@@ -1,20 +1,18 @@
-
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class UpdateRecord extends StatefulWidget {
-  const UpdateRecord({Key? key, required this.studentKey}) : super(key: key);
+class UpdateRecordDebt extends StatefulWidget {
+  const UpdateRecordDebt({Key? key, required this.debtsKey}) : super(key: key);
 
-  final String studentKey;
+  final String debtsKey;
 
   @override
-  State<UpdateRecord> createState() => _UpdateRecordState();
+  State<UpdateRecordDebt> createState() => _UpdateRecordDebtState();
 }
 
-class _UpdateRecordState extends State<UpdateRecord> {
+class _UpdateRecordDebtState extends State<UpdateRecordDebt> {
   final userNameController = TextEditingController();
   final userAgeController = TextEditingController();
   final userSalaryController = TextEditingController();
@@ -25,18 +23,18 @@ class _UpdateRecordState extends State<UpdateRecord> {
   @override
   void initState() {
     super.initState();
-    dbRef = FirebaseDatabase.instance.ref().child('Students').child(myUserId);
+    dbRef = FirebaseDatabase.instance.ref().child('Debts').child(myUserId);
     getStudentData();
   }
 
   void getStudentData() async {
-    DataSnapshot snapshot = await dbRef.child(widget.studentKey).get();
+    DataSnapshot snapshot = await dbRef.child(widget.debtsKey).get();
 
-    Map student = snapshot.value as Map;
+    Map debts = snapshot.value as Map;
 
-    userNameController.text = student['name'];
-    userAgeController.text = student['age'];
-    userSalaryController.text = student['salary'];
+    userNameController.text = debts['name'];
+    userAgeController.text = debts['age'];
+    userSalaryController.text = debts['salary'];
   }
 
   @override
@@ -81,8 +79,8 @@ class _UpdateRecordState extends State<UpdateRecord> {
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Age',
-                  hintText: 'Enter Your Age',
+                  labelText: 'номер телефона',
+                  hintText: 'Введите Ваш номер телефона',
                 ),
               ),
               const SizedBox(
@@ -102,14 +100,14 @@ class _UpdateRecordState extends State<UpdateRecord> {
               ),
               MaterialButton(
                 onPressed: () {
-                  Map<String, String> students = {
+                  Map<String, String> debts = {
                     'name': userNameController.text,
                     'age': userAgeController.text,
                     'salary': userSalaryController.text
                   };
                   dbRef
-                      .child(widget.studentKey)
-                      .update(students)
+                      .child(widget.debtsKey)
+                      .update(debts)
                       .then((value) => {Navigator.pop(context)});
                 },
                 color: Colors.blue,

@@ -3,14 +3,16 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class InsertData extends StatefulWidget {
-  const InsertData({Key? key}) : super(key: key);
+class UpdateRecordCredit extends StatefulWidget {
+  const UpdateRecordCredit({Key? key, required this.creditsKey}) : super(key: key);
+
+  final String creditsKey;
 
   @override
-  State<InsertData> createState() => _InsertDataState();
+  State<UpdateRecordCredit> createState() => _UpdateRecordCreditState();
 }
 
-class _InsertDataState extends State<InsertData> {
+class _UpdateRecordCreditState extends State<UpdateRecordCredit> {
   final userNameController = TextEditingController();
   final userAgeController = TextEditingController();
   final userSalaryController = TextEditingController();
@@ -21,14 +23,25 @@ class _InsertDataState extends State<InsertData> {
   @override
   void initState() {
     super.initState();
-    dbRef = FirebaseDatabase.instance.ref().child('Debts').child(myUserId);
+    dbRef = FirebaseDatabase.instance.ref().child('Credits').child(myUserId);
+    getStudentData();
+  }
+
+  void getStudentData() async {
+    DataSnapshot snapshot = await dbRef.child(widget.creditsKey).get();
+
+    Map credits = snapshot.value as Map;
+
+    userNameController.text = credits['name'];
+    userAgeController.text = credits['number'];
+    userSalaryController.text = credits['salary'];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inserting data'),
+        title: Text('Updating record'),
       ),
       body: Center(
         child: Padding(
@@ -39,7 +52,7 @@ class _InsertDataState extends State<InsertData> {
                 height: 50,
               ),
               const Text(
-                'Inserting data in Firebase Realtime Database',
+                'Updating data in Firebase Realtime Database',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w500,
@@ -54,8 +67,8 @@ class _InsertDataState extends State<InsertData> {
                 keyboardType: TextInputType.text,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Имя',
-                  hintText: 'Введите Ваше имя',
+                  labelText: 'Name',
+                  hintText: 'Enter Your Name',
                 ),
               ),
               const SizedBox(
@@ -66,8 +79,8 @@ class _InsertDataState extends State<InsertData> {
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Номер',
-                  hintText: 'Введите Ваш номер',
+                  labelText: 'номер телефона',
+                  hintText: 'Введите Ваш номер телефона',
                 ),
               ),
               const SizedBox(
@@ -78,8 +91,8 @@ class _InsertDataState extends State<InsertData> {
                 keyboardType: TextInputType.phone,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Сумма',
-                  hintText: 'Введите Вашу сумму',
+                  labelText: 'Salary',
+                  hintText: 'Enter Your Salary',
                 ),
               ),
               const SizedBox(
@@ -87,19 +100,21 @@ class _InsertDataState extends State<InsertData> {
               ),
               MaterialButton(
                 onPressed: () {
-                  List<Map<String, String>>  debts = [{
+                  Map<String, String> credits = {
                     'name': userNameController.text,
                     'number': userAgeController.text,
-                    'salary': userSalaryController.text,
-                  }];
-
-                  dbRef.push().set(debts);
+                    'salary': userSalaryController.text
+                  };
+                  dbRef
+                      .child(widget.creditsKey)
+                      .update(credits)
+                      .then((value) => {Navigator.pop(context)});
                 },
-                child: const Text('Insert Data'),
                 color: Colors.blue,
                 textColor: Colors.white,
                 minWidth: 300,
                 height: 40,
+                child: const Text('Update Data'),
               ),
             ],
           ),

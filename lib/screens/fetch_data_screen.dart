@@ -5,7 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:new_database/screens/update_record_screen.dart';
+import 'package:new_database/screens/update_record_debts_screen.dart';
 
 import '../main.dart';
 
@@ -25,9 +25,9 @@ class _FetchDataState extends State<FetchData> {
   @override
   void initState() {
     super.initState();
-    dbRef = FirebaseDatabase.instance.ref().child('Students').child(myUserId);
+    dbRef = FirebaseDatabase.instance.ref().child('Debts').child(myUserId);
     reference =
-        FirebaseDatabase.instance.ref().child('Students').child(myUserId);
+        FirebaseDatabase.instance.ref().child('Debts').child(myUserId);
   }
 
   Widget listItem({required Map student}) {
@@ -68,7 +68,7 @@ class _FetchDataState extends State<FetchData> {
                       context,
                       MaterialPageRoute(
                           builder: (_) =>
-                              UpdateRecord(studentKey: student['key'])));
+                              UpdateRecordDebt(debtsKey: student['key'])));
                 },
                 child: Row(
                   children: [
