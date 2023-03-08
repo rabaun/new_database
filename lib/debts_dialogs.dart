@@ -17,7 +17,6 @@ class _AddDebtDialogState extends State<AddDebtDialog> {
   final myUserId = FirebaseAuth.instance.currentUser!.uid;
 
   late DatabaseReference dbRef;
-  late DatabaseReference reference;
 
   @override
   void initState() {
@@ -27,78 +26,97 @@ class _AddDebtDialogState extends State<AddDebtDialog> {
 
   @override
   Widget build(BuildContext context) {
-    var container = Center(
-      child: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                autofocus: true,
-                controller: userNameController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Имя',
-                ),
-                onSubmitted: (text) {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                autofocus: true,
-                controller: userAgeController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Номер телефона',
-                ),
-                onSubmitted: (text) {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                autofocus: true,
-                controller: userSalaryController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Сумма',
-                ),
-                onSubmitted: (text) {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    return Container(
-      height: 300,
-      child: AlertDialog(
-        title: Text("Добавить"),
-        content: container,
-        actions: [
-          TextButton(
-            onPressed: () {
-              Map<String, String> debts = {
-                'name': userNameController.text,
-                'number': userAgeController.text,
-                'salary': userSalaryController.text,
-              };
-
-              dbRef.push().set(debts);
-              Navigator.pop(context);
-            },
-            child: Text('ДОБАВИТЬ'),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Введите данные по долгу',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
           ),
-        ],
+          textAlign: TextAlign.center,
+        ),
+        centerTitle: true,
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/money.png'), fit: BoxFit.cover)),
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 50,
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                TextField(
+                  controller: userNameController,
+                  keyboardType: TextInputType.text,
+                  decoration: const InputDecoration(
+                    filled: true, //<-- SEE HERE
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(),
+                    labelText: 'Имя',
+                    hintText: 'Введите Ваше имя',
+                  ),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                TextField(
+                  // style: const TextStyle(color: Colors.white),
+                  controller: userAgeController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    filled: true, //<-- SEE HERE
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(),
+                    labelText: 'Номер телефона',
+                    hintText: 'Введите номер телефона',
+                  ),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                TextField(
+                  controller: userSalaryController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    filled: true, //<-- SEE HERE
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(),
+                    labelText: 'Сумма',
+                    hintText: 'Введите сумму',
+                  ),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                MaterialButton(
+                  onPressed: () {
+                    Map<String, String> debts = {
+                      'name': userNameController.text,
+                      'number': userAgeController.text,
+                      'salary': userSalaryController.text,
+                    };
+
+                    dbRef.push().set(debts);
+                    Navigator.pop(context);
+                  },
+                  color: Colors.blue,
+                  textColor: Colors.white,
+                  minWidth: 300,
+                  height: 40,
+                  child: const Text('Добавить'),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

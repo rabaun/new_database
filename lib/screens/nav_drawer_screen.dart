@@ -18,7 +18,7 @@ class NavDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           UserAccountsDrawerHeader(
-            accountName: const Text('ООО "Центр Безопасности Труда"',
+            accountName: const Text('Мое имя',
                 style: TextStyle(
                   color: Colors.black,
                   fontFamily: 'PlayfairDisplay',
@@ -26,13 +26,13 @@ class NavDrawer extends StatelessWidget {
             accountEmail: Padding(
               padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
               child: Column(children: const [
-                Text('email: cbt-tambov@yandex.ru',
+                Text('мой email',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: 'PlayfairDisplay',
                     )),
-                Text('тел.: +7 (4752) 73-44-06',
+                Text('мой телефон',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Colors.black,
@@ -43,49 +43,30 @@ class NavDrawer extends StatelessWidget {
             currentAccountPicture: const CircleAvatar(
               backgroundColor: Colors.blue,
               child: Image(
-                image: AssetImage('assets/oldman.jpg'),
+                image: AssetImage('assets/foto.png'),
                 // width: MediaQuery.of(context).size.width,
               ),
             ),
             otherAccountsPictures: const <Widget>[
               CircleAvatar(
-                backgroundColor: Colors.white,
+                backgroundColor: Colors.black,
                 child:  Image(
-                    image: AssetImage('assets/logo.png'),
+                  color: Colors.blue,
+                    image: AssetImage('assets/month.png'),
               ))
             ],
           ),
           ListTile(
-            leading: const Icon(Icons.input),
-            title: const Text('Я должен'),
-            onTap: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const DebtsList()),
-              )
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.input),
-            title: const Text('Мне должны'),
-            onTap: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CreditsList()),
-              )
-            },
-          ),
-          ListTile(
             leading: const Icon(Icons.verified_user),
-            title: const Text('Profile'),
+            title: const Text('Профиль'),
             onTap: () => {  Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const HomeScreem()),
+              MaterialPageRoute(builder: (context) => HomeScreen()),
             )},
           ),
           ListTile(
             leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
+            title: const Text('Настройки'),
             onTap: () => {
               Navigator.push(
                 context,
@@ -95,7 +76,7 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.border_color),
-            title: const Text('Feedback'),
+            title: const Text('Отзывы'),
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(

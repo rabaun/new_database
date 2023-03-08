@@ -1,5 +1,5 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:new_database/screens/account_screen.dart';
 import 'package:new_database/screens/home_screen.dart';
@@ -25,6 +25,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        home: AnimatedSplashScreen(
+            duration: 1000,
+            splash: Image.asset('assets/flutter.png', scale: 1),
+            nextScreen: const MainScreen(),
+            splashTransition: SplashTransition.fadeTransition,
+            backgroundColor: Colors.blue));
+  }
+}
+
+class MainScreen extends StatelessWidget {
+const MainScreen({super.key});
+  Widget build(BuildContext context) {
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         pageTransitionsTheme: const PageTransitionsTheme(builders: {
@@ -33,7 +46,7 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/': (context) => const FirebaseStream(),
-        '/home': (context) => HomeScreem(),
+        '/home': (context) => HomeScreen(),
         '/account': (context) => const AccountScreen(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),

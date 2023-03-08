@@ -1,6 +1,7 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 import 'account_screen.dart';
 import 'credits_list_screen.dart';
@@ -8,14 +9,14 @@ import 'debts_list_screen.dart';
 import 'login_screen.dart';
 import 'nav_drawer_screen.dart';
 
-class HomeScreem extends StatefulWidget {
-  const HomeScreem({Key? key}) : super(key: key);
+class FirstPage extends StatefulWidget {
+  const FirstPage({Key? key}) : super(key: key);
 
   @override
-  _HomeScreemState createState() => _HomeScreemState();
+  FirstPageState createState() => FirstPageState();
 }
 
-class _HomeScreemState extends State<HomeScreem> {
+class FirstPageState extends State<FirstPage> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -23,32 +24,6 @@ class _HomeScreemState extends State<HomeScreem> {
     return MaterialApp(
         home: Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text('Долговая книжка'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              if ((user == null)) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AccountScreen()),
-                );
-              }
-            },
-            icon: Icon(
-              Icons.person,
-              color: (user == null) ? Colors.white : Colors.yellow,
-            ),
-          ),
-        ],
-      ),
       body: Container(
         height: double.maxFinite,
         width: double.maxFinite,
@@ -57,129 +32,84 @@ class _HomeScreemState extends State<HomeScreem> {
                 image: AssetImage('assets/money.png'), fit: BoxFit.cover)),
         child: SafeArea(
           child: Center(
-            child: (user == null)
-                ? const Text("Контент для НЕ зарегистрированных в системе")
-                : Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              textStyle: const TextStyle(fontSize: 20),
-                              fixedSize: Size(350, 100),
-                              backgroundColor: Colors.green),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const DebtsList()),
-                            );
-                          },
-                          child: const Text('Я должен'),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              textStyle: const TextStyle(fontSize: 20),
-                              fixedSize: Size(350, 100),
-                              backgroundColor: Colors.deepOrange),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const CreditsList()),
-                            );
-                          },
-                          child: const Text('Мне должны'),
-                        ),
-                      ),
-                    ],
-                  ),
-            //child: Text('Контент для НЕ зарегистрированных в системе'),
-          ),
+              child: (user == null)
+                  ? const Text("Контент для НЕ зарегистрированных в системе")
+                  : const DebtsList()),
         ),
       ),
       drawer: NavDrawer(),
-      bottomNavigationBar: Container(
-        height: 60,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+    ));
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  final user = FirebaseAuth.instance.currentUser;
+  static final List _tabCount = ["Я должен", "Мне должны"];
+  static const List<Widget> _views = [
+    Center(child: FirstPage()),
+    Center(child: CreditsList())
+  ];
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: _views.length, vsync: this);
+    _tabController.addListener(() {
+      if (mounted) {
+        final canSwipe = _tabController.index == 0;
+        context.getSwipeablePageRoute<void>()!.canSwipe = canSwipe;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: MorphingAppBar(
+        title: const Text('Долговая книжка'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              if ((user == null)) {
+                context.navigator.push<void>(
+                    SwipeablePageRoute(builder: (_) => LoginScreen()));
+              } else {
+                context.navigator.push<void>(
+                    SwipeablePageRoute(builder: (_) => AccountScreen()));
+              }
+            },
+            icon: Icon(
+              Icons.person,
+              color: (user == null) ? Colors.white : Colors.yellow,
+            ),
           ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              enableFeedback: false,
-              onPressed: () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomeScreem()),
-                )
-              },
-              icon: const Icon(
-                Icons.home_outlined,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
-            IconButton(
-              enableFeedback: false,
-              onPressed: () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CreditsList()),
-                )
-              },
-              icon: const Icon(
-                Icons.work_outline_outlined,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
-            IconButton(
-              enableFeedback: false,
-              onPressed: () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const DebtsList()),
-                )
-              },
-              icon: const Icon(
-                Icons.monetization_on_sharp,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
-            IconButton(
-              enableFeedback: false,
-              onPressed: () => {
-                (user == null)
-                    ? Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()),
-                      )
-                    : Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AccountScreen()),
-                      )
-              },
-              icon: const Icon(
-                Icons.exit_to_app,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
+        ],
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.white,
+          isScrollable: true,
+          tabs: [
+            for (var tab = 0; tab < _tabCount.length; tab++)
+              Tab(text: '${_tabCount[tab]}'),
           ],
         ),
       ),
-    ));
+      drawer: NavDrawer(),
+      body: TabBarView(controller: _tabController, children: _views),
+    );
   }
 }
