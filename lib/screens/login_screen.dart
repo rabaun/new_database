@@ -3,10 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../services/snack_bar.dart';
-import 'account_screen.dart';
-import 'credits_list_screen.dart';
-import 'debts_list_screen.dart';
-import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -98,6 +94,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           ? 'Введите правильный Email'
                           : null,
                   decoration: const InputDecoration(
+                    filled: true, //<-- SEE HERE
+                    fillColor: Colors.white,
                     border: OutlineInputBorder(),
                     hintText: 'Введите Email',
                   ),
@@ -112,6 +110,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       : null,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   decoration: InputDecoration(
+                    filled: true, //<-- SEE HERE
+                    fillColor: Colors.white,
                     border: const OutlineInputBorder(),
                     hintText: 'Введите пароль',
                     suffix: InkWell(
@@ -148,84 +148,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
           ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        height: 60,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              enableFeedback: false,
-              onPressed: () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomeScreem()),
-                )
-              },
-              icon: const Icon(
-                Icons.home_outlined,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
-            IconButton(
-              enableFeedback: false,
-              onPressed: () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CreditsList()),
-                )
-              },
-              icon: const Icon(
-                Icons.work_outline_outlined,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
-            IconButton(
-              enableFeedback: false,
-              onPressed: () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const DebtsList()),
-                )
-              },
-              icon: const Icon(
-                Icons.monetization_on_sharp,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
-            IconButton(
-              enableFeedback: false,
-              onPressed: () => {
-                (user == null)
-                    ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const LoginScreen()),
-                )
-                    : Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AccountScreen()),
-                )
-              },
-              icon: const Icon(
-                Icons.exit_to_app,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
-          ],
         ),
       ),
     );

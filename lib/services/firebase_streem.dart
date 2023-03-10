@@ -19,9 +19,9 @@ class FirebaseStream extends StatelessWidget {
           if (!snapshot.data!.emailVerified) {
             return const VerifyEmailScreen();
           }
-          return HomeScreem();
+          return HomeScreen();
         } else {
-          return HomeScreem();
+          return HomeScreen();
         }
       },
     );

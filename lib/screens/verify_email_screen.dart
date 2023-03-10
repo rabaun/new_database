@@ -76,7 +76,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   @override
   Widget build(BuildContext context) => isEmailVerified
-      ? HomeScreem()
+      ? HomeScreen()
       : Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(

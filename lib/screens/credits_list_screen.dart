@@ -5,11 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:new_database/screens/update_record_credits_screen.dart';
 
 import '../credits_dialogs.dart';
-import 'account_screen.dart';
-import 'debts_list_screen.dart';
-import 'home_screen.dart';
-import 'login_screen.dart';
-import 'nav_drawer_screen.dart';
 
 class CreditsList extends StatefulWidget {
   const CreditsList({Key? key}) : super(key: key);
@@ -31,8 +26,7 @@ class CreditsListState extends State<CreditsList> {
   void initState() {
     super.initState();
     dbRef = FirebaseDatabase.instance.ref().child('Credits').child(myUserId);
-    reference =
-        FirebaseDatabase.instance.ref().child('Credits').child(myUserId);
+    reference = FirebaseDatabase.instance.ref().child('Credits').child(myUserId);
   }
 
   Widget _buildCard({required Map credits}) {
@@ -62,17 +56,25 @@ class CreditsListState extends State<CreditsList> {
                         padding: const EdgeInsets.fromLTRB(0, 0, 8.0, 0),
                         child: Text(
                           credits['salary'],
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w400),
                         ),
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => UpdateRecordCredit(
-                                      creditsKey: credits['key'])));
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return UpdateRecordCredit(
+                                  creditsKey: credits['key']);
+                            },
+                          );
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (_) => UpdateRecordCredit(
+                          //             creditsKey: credits['key']))
+                          // );
                         },
                         child: Row(
                           children: [
@@ -115,33 +117,6 @@ class CreditsListState extends State<CreditsList> {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Мне должны'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              if ((user == null)) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AccountScreen()),
-                );
-              }
-            },
-            icon: Icon(
-              Icons.person,
-              color: (user == null) ? Colors.white : Colors.yellow,
-            ),
-          ),
-        ],
-      ),
-      drawer: NavDrawer(),
       body: Container(
         height: double.maxFinite,
         width: double.maxFinite,
@@ -174,87 +149,11 @@ class CreditsListState extends State<CreditsList> {
               return const AddCreditsDialog();
             },
           );
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (_) => AddCreditsDialog()));
         },
-      ),
-      floatingActionButtonLocation:
-      FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: Container(
-        height: 60,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              enableFeedback: false,
-              onPressed: () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomeScreem()),
-                )
-              },
-              icon: const Icon(
-                Icons.home_outlined,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
-            IconButton(
-              enableFeedback: false,
-              onPressed: () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CreditsList()),
-                )
-              },
-              icon: const Icon(
-                Icons.work_outline_outlined,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
-            IconButton(
-              enableFeedback: false,
-              onPressed: () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const DebtsList()),
-                )
-              },
-              icon: const Icon(
-                Icons.monetization_on_sharp,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
-            IconButton(
-              enableFeedback: false,
-              onPressed: () => {
-                (user == null)
-                    ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const LoginScreen()),
-                )
-                    : Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AccountScreen()),
-                )
-              },
-              icon: const Icon(
-                Icons.exit_to_app,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
