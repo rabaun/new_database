@@ -1,11 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'credits_list_screen.dart';
-import 'debts_list_screen.dart';
-import 'home_screen.dart';
-import 'login_screen.dart';
-
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
 

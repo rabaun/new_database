@@ -1,7 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:new_database/screens/credits_list_screen.dart';
-import 'package:new_database/screens/debts_list_screen.dart';
 import 'package:new_database/screens/settings_screen.dart';
 
 import 'account_screen.dart';
